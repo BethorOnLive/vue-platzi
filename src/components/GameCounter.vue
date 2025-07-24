@@ -3,6 +3,31 @@
     const id = Math.random().toString();
     const myAttr = 'aria-label';
     const araiaLabelValue = 'numero del contador';
+    const props = defineProps({
+        minNumber: {
+            type: Number,
+            required: true,
+        },
+        maxNumber: {
+            type: Number,
+            required: true,
+        },
+
+        example: {
+            type: String,
+            validator: (value: string) => value.includes('+') || value.includes('-')  
+        },
+
+        random: {
+            type: Number,
+            default: 12345,
+        }
+
+    });
+
+// Acceder como props.minNumber, props.maxNumber
+    console.log(`minNumber: ${props.minNumber}, maxNumber: ${props.maxNumber} example: ${props.example} random: ${props.random}`);
+    
 </script>
 
 
