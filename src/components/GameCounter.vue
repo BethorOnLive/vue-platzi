@@ -1,9 +1,17 @@
 <script setup lang="ts">
-    const number = 10;
+    import JSConfetti from 'js-confetti';
+    import { ref, watch } from 'vue';
+    import { getRandomNumbers } from '@/utils/randomNumbers';
+
     const id = Math.random().toString();
     const myAttr = 'aria-label';
     const araiaLabelValue = 'numero del contador';
-    const props = defineProps({
+
+    //const counter = ref(0);
+    //const increment = () => counter.value++;
+    //const decrement = () => counter.value--;
+
+    const { minNumber, maxNumber } = defineProps({
         minNumber: {
             type: Number,
             required: true,
@@ -25,18 +33,45 @@
 
     });
 
+    const { initialRandomNumber, numberToGuess } = getRandomNumbers({ maxNumber, minNumber });
+
+    const jsConfetti = new JSConfetti();
+
+    const counter = ref(initialRandomNumber);
+    const isWinner = ref(false);
+
+    const increment = () => {
+        if (maxNumber === counter.value) return 
+        counter.value++;
+    }
+
+    const decrement = () => {
+        if (counter.value === minNumber) return 
+        counter.value--;
+    }
+
 // Acceder como props.minNumber, props.maxNumber
-    console.log(`minNumber: ${props.minNumber}, maxNumber: ${props.maxNumber} example: ${props.example} random: ${props.random}`);
+    console.log(`minNumber: ${minNumber}, maxNumber: ${maxNumber}`);
+
+    watch(counter, () =>{
+        console.log('El contador ha cambiado', counter.value);
+        if(counter.value === numberToGuess){
+            console.log("Adivinaste");
+            
+           jsConfetti.addConfetti();
+           isWinner.value = true; 
+        }
+    });
     
 </script>
 
 
 <template>
     <div class="counter-game">
-        <span :[myAttr]="araiaLabelValue" :id="id" class="number">{{ number }}</span>
+        <span :[myAttr]="araiaLabelValue" :id="id" class="number">{{ counter }}</span>
         <div class="button-group">
-            <button>-</button>
-            <button>+</button>
+            <button :disabled="isWinner" @click="decrement">-</button>
+            <button :disabled="isWinner" @click="increment">+</button>
         </div>
     </div>
 </template>
